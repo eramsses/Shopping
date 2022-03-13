@@ -9,6 +9,14 @@ namespace Shopping.Data
         {
         }
 
-        public DbSet<Country> countries { get; set; }
+        //Registrar las tablas
+        public DbSet<Country> Countries { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            //Indica que el nombre es único para la tabla Country
+            modelBuilder.Entity<Country>().HasIndex(c => c.Name).IsUnique();
+        }
     }
 }
