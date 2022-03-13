@@ -1,13 +1,13 @@
 ﻿@model Shopping.Data.Entities.Country
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "FS | Detalles";
 }
 
-<h1>Details</h1>
+<h1>Detalles</h1>
 
 <div>
-    <h4>Country</h4>
+    <h4>País</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -18,7 +18,8 @@
         </dd>
     </dl>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<div class="mt-2">
+    <a asp-action="Index" class="btn btn-primary"><i class="fal fa-rotate-left"></i> Regresar</a>
+    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-outline-warning"><i class="fal fa-pencil"></i> Modificar</a>
+    
 </div>
