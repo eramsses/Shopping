@@ -8,6 +8,8 @@
  */
 
 :root {
+    --bs-txt-header-color: #495057;
+    --bs-txt-muted-color: #6c757d;
     --bs-blue: #065ee2;
     --bs-indigo: #6610f2;
     --bs-purple: #6f42c1;
@@ -93,6 +95,41 @@ body {
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent
 }
+
+.main-header{
+    margin-bottom:20px;
+}
+    
+    .main-header h2{
+        font-weight: 200;
+        font-family: var(--bs-font-sans-serif);/* 'latolight';*/
+        display:-moz-inline-stack;
+        display:inline-block;
+        vertical-align:middle;
+        *vertical-align:auto;zoom:1;
+        *display:inline;
+        border-right:1px solid #5D6C7D;
+        color: var(--bs-txt-header-color);
+        margin:0;
+        padding-right:10px;
+        margin-right:10px;
+    }
+
+    .main-header em{
+        font-weight: 300; 
+        color:var(--bs-txt-muted-color);
+        font-family: var(--bs-font-sans-serif);
+        vertical-align: bottom;
+    }
+
+    @media(max-width : 768px){
+        .main-header h2{
+            display:block;
+            border-right:none;
+        }
+    
+    }
+    
 
 hr {
     margin: 1rem 0;
@@ -242,6 +279,14 @@ strong {
 .small,
 small {
     font-size: .875em
+}
+
+.h1 .small,
+.h2 .small{
+    font-size: .75em;
+    font-style: italic!important;
+    --bs-text-opacity: 1;
+    color: var(--bs-txt-muted-color)!important;
 }
 
 .mark,
@@ -8320,7 +8365,7 @@ fieldset:disabled .btn {
 
 .text-muted {
     --bs-text-opacity: 1;
-    color: #6c757d!important
+    color: var(--bs-txt-muted-color)!important
 }
 
 .text-black-50 {
