@@ -3,11 +3,18 @@
 @{
     ViewData["Title"] = "Modificar";
 }
-
-<h1>Modificar</h1>
-
-<h4>Modificar País</h4>
-<hr />
+<!--Encabezado de Página-->
+<div class="main-header d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom ">
+    <div class="col-lg-8">
+        <h2>Modificar País</h2>
+        <em>Modificar la información un país.</em>
+    </div>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <a asp-action="Index" class="btn btn-primary"><i class="fal fa-rotate-left"></i> Regresar</a>
+        </div>
+    </div>
+</div>
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
@@ -19,7 +26,6 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group mt-2">
-                <a asp-action="Index" class="btn btn-primary"><i class="fal fa-rotate-left"></i> Regresar</a>
                 <button type="submit" value="Save" class="btn btn-outline-warning"><i class="fal fa-floppy-disk-pen"></i> Modificar</button>
             </div>
         </form>
