@@ -1,0 +1,38 @@
+﻿@model Shopping.Data.Entities.Category
+
+@{
+    ViewData["Title"] = "Nueva Categoría";
+}
+<!--Encabezado de Página-->
+<div class="main-header d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom ">
+    <div class="col-lg-8">
+        <h2>Nuevoa Categoría</h2>
+        <em>Crear una nueva categoría.</em>
+    </div>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <a asp-action="Index" class="btn btn-primary"><i class="fal fa-rotate-left"></i> Regresar</a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <partial name="_Category" />
+            <div class="form-group mt-2">
+                <button type="submit" class="btn btn-success"><i class="fal fa-save"></i> Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+</div>
+
+@section Scripts {
+    @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+}
