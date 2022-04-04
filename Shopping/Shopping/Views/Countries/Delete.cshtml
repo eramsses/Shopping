@@ -12,13 +12,20 @@
     </div>
     <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
-            <a asp-action="Index" class="btn btn-primary"><i class="fal fa-rotate-left"></i> Regresar</a>
+            <a asp-action="Index" class="btn btn-primary"><i class="fal fa-arrow-left"></i> Regresar</a>
         </div>
     </div>
 </div>
 <div>
     <h4>Confirme que desea eliminar el país <b>@Html.DisplayFor(model => model.Name)</b>?</h4>
-    
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.StatesNumber)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.StatesNumber)
+        </dd>
+    </dl>
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
         <button type="submit" class="btn btn-outline-danger"><i class="fal fa-trash-xmark"></i> Eliminar</button>

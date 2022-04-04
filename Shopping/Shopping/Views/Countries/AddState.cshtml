@@ -1,4 +1,4 @@
-﻿@model Shopping.Data.Entities.Country
+﻿@model Shopping.Models.StateViewModel
 
 @{
     ViewData["Title"] = "Nuevo País";
@@ -6,21 +6,21 @@
 <!--Encabezado de Página-->
 <div class="main-header d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom ">
     <div class="col-lg-8">
-        <h2>Nuevo País</h2>
-        <em>Crear un nuevo país.</em>
+        <h2>Nuevo Departamento/Estado</h2>
+        <em>Crear un nuevo departamento/estado.</em>
     </div>
     <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
-            <a asp-action="Index" class="btn btn-primary"><i class="fal fa-arrow-left"></i> Regresar</a>
+            <a asp-action="Details" asp-route-id="@Model.CountryId" class="btn btn-primary"><i class="fal fa-arrow-left"></i> Regresar</a>
         </div>
     </div>
 </div>
 
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
-            <input type="hidden" asp-for="States"/>
-            <partial name="_Country" />
+        <form asp-action="AddState">
+            <input type="hidden" asp-for="CountryId"/>
+            <partial name="_State" />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group mt-2">
                 <button type="submit" class="btn btn-success"><i class="fal fa-save"></i> Guardar</button>
