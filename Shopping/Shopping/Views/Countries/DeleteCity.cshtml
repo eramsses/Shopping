@@ -1,0 +1,28 @@
+﻿@model Shopping.Data.Entities.City
+
+@{
+    ViewData["Title"] = "Eliminar";
+}
+
+<!--Encabezado de Página-->
+<div class="main-header d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom ">
+    <div class="col-lg-8">
+        <h2>Eliminar Ciudad</h2>
+        <em>Elimina un ciudad.</em>
+    </div>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <a asp-action="DetailsState" asp-route-id="@Model?.State.Id" class="btn btn-primary"><i class="fal fa-arrow-left"></i> Regresar</a>
+        </div>
+    </div>
+</div>
+<div>
+    <h4>Confirme que desea eliminar el departamento/estado <b>@Html.DisplayFor(model => model.Name)</b>?</h4>
+
+    <form asp-action="DeleteCity">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="State" />
+        <button type="submit" class="btn btn-outline-danger"><i class="fal fa-trash-xmark"></i> Eliminar</button>
+        
+    </form>
+</div>

@@ -1,0 +1,47 @@
+﻿@model Shopping.Models.CityViewModel
+@{
+    ViewData["Title"] = "Modificar";
+}
+<!--Encabezado de Página-->
+<div class="main-header d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom ">
+    <div class="col-lg-8">
+        <h2>Modificar Ciudad</h2>
+        <em>Modificar la información una ciudad</em>
+    </div>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <a asp-action="DetailsState" asp-route-id="@Model.StateId" class="btn btn-primary"><i class="fal fa-arrow-left"></i> Regresar</a>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="EditCity">
+            <div class="row">
+                <div class="col-md-4">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="StateId" />
+                    <partial name="_City" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                </div>
+            </div>
+
+            <div class="form-group mt-2">
+                <button type="submit" value="Save" class="btn btn-outline-warning"><i class="fal fa-floppy-disk-pen"></i> Modificar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+</div>
+
+@section Scripts {
+    @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+}
