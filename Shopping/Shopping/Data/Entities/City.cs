@@ -14,5 +14,9 @@ namespace Shopping.Data.Entities
         //pertenece a un State
         public State State { get; set; }
 
+        public ICollection<User> Users { get; set; }
+        
+
+
     }
 }
