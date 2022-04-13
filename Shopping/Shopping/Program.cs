@@ -45,6 +45,9 @@ builder.Services.AddScoped<IUserHelper, UserHelper>();
 //Inyección del Combos Helper
 builder.Services.AddScoped<ICombosHelper, CombosHelper>();
 
+//Inyección del Blob Helper
+builder.Services.AddScoped<IBlobHelper, BlobHelper>();
+
 
 //Agregar para que actualice los cambios al momento del desarrollo
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
