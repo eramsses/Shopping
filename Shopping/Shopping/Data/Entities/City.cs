@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Shopping.Data.Entities
 {
@@ -12,6 +13,7 @@ namespace Shopping.Data.Entities
         public string Name { get; set; }
 
         //pertenece a un State
+        [JsonIgnore]
         public State State { get; set; }
 
         public ICollection<User> Users { get; set; }

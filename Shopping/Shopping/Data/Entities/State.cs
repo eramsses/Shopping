@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Shopping.Data.Entities
 {
@@ -6,12 +7,13 @@ namespace Shopping.Data.Entities
     {
         public int Id { get; set; }
 
-        [Display(Name = "Departamento/Estado")]
+        [Display(Name = "Departamento / Estado")]
         [MaxLength(50, ErrorMessage = "El campo {0} debe tener máximo {1} caractéres")]
         [Required(ErrorMessage = "El campo {0} es obligatorio")]
         public string Name { get; set; }
 
         //Pertenece a Country
+        [JsonIgnore]
         public Country Country { get; set; }
 
         //Tiene muchas Cities

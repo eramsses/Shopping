@@ -164,7 +164,7 @@ namespace Shopping.Controllers
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                     {
                         string name = model.Name;
-                        ModelState.AddModelError(string.Empty, $"Ya existe un departamento/estado con el nombre {name} en el mismo país");
+                        ModelState.AddModelError(string.Empty, $"Ya existe un Departamento / Estado con el nombre {name} en el mismo país");
                     }
                     else
                     {
@@ -349,7 +349,7 @@ namespace Shopping.Controllers
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                     {
                         string name = model.Name;
-                        ModelState.AddModelError(string.Empty, $"Ya existe un departamento/estado con el nombre {name} en este país.");
+                        ModelState.AddModelError(string.Empty, $"Ya existe un Departamento / Estado con el nombre {name} en este país.");
                     }
                     else
                     {
@@ -419,7 +419,7 @@ namespace Shopping.Controllers
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                     {
                         string name = model.Name;
-                        ModelState.AddModelError(string.Empty, $"Ya existe una ciudad con el nombre {name} en este departamento/estado.");
+                        ModelState.AddModelError(string.Empty, $"Ya existe una ciudad con el nombre {name} en este Departamento / Estado.");
                     }
                     else
                     {

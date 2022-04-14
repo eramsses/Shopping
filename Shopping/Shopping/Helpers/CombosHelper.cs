@@ -26,7 +26,7 @@ namespace Shopping.Helpers
             return categories;
         }
 
-        public async Task<IEnumerable<SelectListItem>> GetComboCountrieAsync()
+        public async Task<IEnumerable<SelectListItem>> GetComboCountriesAsync()
         {
             List<SelectListItem> countries = await _context.Countries.Select(p => new SelectListItem
             {
@@ -50,7 +50,7 @@ namespace Shopping.Helpers
             })
                 .OrderBy(s => s.Text)
                 .ToListAsync();
-            states.Insert(0, new SelectListItem { Text = "Seleccione un departamento/estado", Value = "0" });
+            states.Insert(0, new SelectListItem { Text = "Seleccione un Departamento / Estado", Value = "0" });
             return states;
         }
 
