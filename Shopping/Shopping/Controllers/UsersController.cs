@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shopping.Data;
 using Shopping.Data.Entities;
@@ -8,14 +9,15 @@ using Shopping.Models;
 
 namespace Shopping.Controllers
 {
-    public class AccountController : Controller
+    [Authorize(Roles = "Admin")]
+    public class UsersController : Controller
     {
         private readonly DataContext _context;
-        private readonly IUserHelper _userHelper;       
+        private readonly IUserHelper _userHelper;
         private readonly ICombosHelper _combosHelper;
         private readonly IBlobHelper _blobHelper;
 
-        public AccountController(DataContext context, IUserHelper userHelper, ICombosHelper combosHelper, IBlobHelper blobHelper)
+        public UsersController(DataContext context, IUserHelper userHelper, ICombosHelper combosHelper, IBlobHelper blobHelper)
         {
             _context = context;
             _userHelper = userHelper;
@@ -23,15 +25,24 @@ namespace Shopping.Controllers
             _blobHelper = blobHelper;
         }
 
-        public async Task<IActionResult> Register()
+        public async Task<IActionResult> Index()
         {
-            AddUserViewModel model = new ()
+            return View(await _context.Users
+                .Include(u => u.City)
+                .ThenInclude(c => c.State)
+                .ThenInclude(s => s.Country)
+                .ToListAsync());
+        }
+
+        public async Task<IActionResult> Create()
+        {
+            AddUserViewModel model = new()
             {
                 Id = Guid.Empty.ToString(),
                 Countries = await _combosHelper.GetComboCountriesAsync(),
                 States = await _combosHelper.GetComboStatesAsync(0),
                 Cities = await _combosHelper.GetComboCitiesAsync(0),
-                UserType = UserType.User,
+                UserType = UserType.Admin,
             };
 
             return View(model);
@@ -39,7 +50,7 @@ namespace Shopping.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(AddUserViewModel model)
+        public async Task<IActionResult> Create(AddUserViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -62,64 +73,14 @@ namespace Shopping.Controllers
                     return View(model);
                 }
 
-                LoginViewModel loginViewModel = new LoginViewModel
-                {
-                    Password = model.Password,
-                    RememberMe = false,
-                    Username = model.Username
-                };
+                return RedirectToAction("Index");
 
-                var result2 = await _userHelper.LoginAsync(loginViewModel);
-
-                if (result2.Succeeded)
-                {
-                    return RedirectToAction("Index", "Home");
-                }
             }
 
             model.Countries = await _combosHelper.GetComboCountriesAsync();
             model.States = await _combosHelper.GetComboStatesAsync(model.CountryId);
             model.Cities = await _combosHelper.GetComboCitiesAsync(model.StateId);
             return View(model);
-        }
-
-
-        public IActionResult Login()
-        {
-            if (User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-
-            return View(new LoginViewModel());
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                Microsoft.AspNetCore.Identity.SignInResult result = await _userHelper.LoginAsync(model);
-                if (result.Succeeded)
-                {
-                    return RedirectToAction("Index", "Home");
-                }
-
-                ModelState.AddModelError(string.Empty, "Email o contraseña incorrectos.");
-            }
-
-            return View(model);
-        }
-
-        public async Task<IActionResult> Logout()
-        {
-            await _userHelper.LogoutAsync();
-            return RedirectToAction("Index", "Home");
-        }
-
-        public IActionResult NotAuthorized()
-        {
-            return View();
         }
 
         public JsonResult GetStates(int countryId)
@@ -147,7 +108,6 @@ namespace Shopping.Controllers
 
             return Json(state.Cities.OrderBy(c => c.Name));
         }
-
 
     }
 }
