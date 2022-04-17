@@ -11,7 +11,7 @@ namespace Shopping.Controllers
     public class AccountController : Controller
     {
         private readonly DataContext _context;
-        private readonly IUserHelper _userHelper;       
+        private readonly IUserHelper _userHelper;
         private readonly ICombosHelper _combosHelper;
         private readonly IBlobHelper _blobHelper;
 
@@ -25,7 +25,7 @@ namespace Shopping.Controllers
 
         public async Task<IActionResult> Register()
         {
-            AddUserViewModel model = new ()
+            AddUserViewModel model = new()
             {
                 Id = Guid.Empty.ToString(),
                 Countries = await _combosHelper.GetComboCountriesAsync(),
@@ -105,7 +105,16 @@ namespace Shopping.Controllers
                     return RedirectToAction("Index", "Home");
                 }
 
-                ModelState.AddModelError(string.Empty, "Email o contraseña incorrectos.");
+                if (result.IsLockedOut)
+                {
+                    ModelState.AddModelError(string.Empty, "Ya superó el máximo de intentos fallidos su cuenta esta bloqueada, intentelo en 5 minutos");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Email o contraseña incorrectos.");
+                }
+
+
             }
 
             return View(model);
@@ -219,7 +228,7 @@ namespace Shopping.Controllers
         {
             if (ModelState.IsValid)
             {
-                if(model.OldPassword == model.NewPassword)
+                if (model.OldPassword == model.NewPassword)
                 {
                     ModelState.AddModelError(string.Empty, "Debes ingresar una contraseña diferente.");
                     return View(model);
