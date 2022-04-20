@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shopping.Common;
@@ -17,14 +18,16 @@ namespace Shopping.Controllers
         private readonly ICombosHelper _combosHelper;
         private readonly IBlobHelper _blobHelper;
         private readonly IMailHelper _mailHelper;
+        private readonly INotyfService _notyf;
 
-        public AccountController(DataContext context, IUserHelper userHelper, ICombosHelper combosHelper, IBlobHelper blobHelper, IMailHelper mailHelper)
+        public AccountController(DataContext context, IUserHelper userHelper, ICombosHelper combosHelper, IBlobHelper blobHelper, IMailHelper mailHelper, INotyfService notyf)
         {
             _context = context;
             _userHelper = userHelper;
             _combosHelper = combosHelper;
             _blobHelper = blobHelper;
             _mailHelper = mailHelper;
+            _notyf = notyf;
         }
 
         public async Task<IActionResult> Register()
@@ -59,7 +62,8 @@ namespace Shopping.Controllers
                 User user = await _userHelper.AddUserAsync(model);
                 if (user == null)
                 {
-                    ModelState.AddModelError(string.Empty, "Este correo ya está siendo usado.");
+                    _notyf.Error("Este correo ya está siendo usado.");
+
                     model.Countries = await _combosHelper.GetComboCountriesAsync();
                     model.States = await _combosHelper.GetComboStatesAsync(model.CountryId);
                     model.Cities = await _combosHelper.GetComboCitiesAsync(model.StateId);
@@ -82,11 +86,11 @@ namespace Shopping.Controllers
                         $"<br><p><a href = \"{tokenLink}\">Confirmar Email</a></p>");
                 if (response.IsSuccess)
                 {
-                    ViewBag.Message = "Las instrucciones para habilitar el usuario han sido enviadas al correo.";
+                    _notyf.Information("<h5>Usuario Creado!</h5><br/>Las instrucciones para habilitar el usuario han sido enviadas al correo.");
                     return View(model);
                 }
 
-                ModelState.AddModelError(string.Empty, response.Message);
+                _notyf.Error(response.Message);
 
             }
 
@@ -118,8 +122,6 @@ namespace Shopping.Controllers
             return View();
         }
 
-
-
         public IActionResult Login()
         {
             if (User.Identity.IsAuthenticated)
@@ -138,20 +140,21 @@ namespace Shopping.Controllers
                 Microsoft.AspNetCore.Identity.SignInResult result = await _userHelper.LoginAsync(model);
                 if (result.Succeeded)
                 {
+                    _notyf.Success("Bienvenido a Fast Shopping", 2);
                     return RedirectToAction("Index", "Home");
                 }
 
                 if (result.IsLockedOut)
                 {
-                    ModelState.AddModelError(string.Empty, "Ya superó el máximo de intentos fallidos su cuenta esta bloqueada, intentelo en 5 minutos");
+                    _notyf.Error("Ya superó el máximo de intentos fallidos su cuenta esta bloqueada, intentelo en 10 minutos");
                 }
                 else if (result.IsNotAllowed)//Corero no confirmado
                 {
-                    ModelState.AddModelError(string.Empty, "El usuario no ha sido habilitado, debes de seguir las instrucciones del correo enviado para poder habilitarte en el sistema.");
+                    _notyf.Error("El usuario no ha sido habilitado, debes de seguir las instrucciones del correo enviado para poder habilitarte en el sistema.");
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Email o contraseña incorrectos.");
+                    _notyf.Error("Email o contraseña incorrectos.", 2);
                 }
 
 
@@ -249,8 +252,11 @@ namespace Shopping.Controllers
                 user.Document = model.Document;
 
                 await _userHelper.UpdateUserAsync(user);
+                _notyf.Success("<h5>Perfil actualizado.</h5><br/>Información de usuario actualizada exitosamente.", 3);
                 return RedirectToAction("Index", "Home");
             }
+
+            _notyf.Error("Verificar la información ingresada", 2);
 
             model.Countries = await _combosHelper.GetComboCountriesAsync();
             model.States = await _combosHelper.GetComboStatesAsync(model.CountryId);
@@ -270,7 +276,7 @@ namespace Shopping.Controllers
             {
                 if (model.OldPassword == model.NewPassword)
                 {
-                    ModelState.AddModelError(string.Empty, "Debes ingresar una contraseña diferente.");
+                    _notyf.Error("Debes ingresar una contraseña diferente.");
                     return View(model);
                 }
 
@@ -280,16 +286,17 @@ namespace Shopping.Controllers
                     var result = await _userHelper.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
                     if (result.Succeeded)
                     {
+                        _notyf.Success("<h5>Contraseña Actualizada.</h5><br/>La contraseña se actualizó exitosamente.", 5);
                         return RedirectToAction("ChangeUser");
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, result.Errors.FirstOrDefault().Description);
+                        _notyf.Error(result.Errors.FirstOrDefault().Description);
                     }
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "User no found.");
+                    _notyf.Error("Usuario no encontrado.");
                 }
             }
 
@@ -309,7 +316,7 @@ namespace Shopping.Controllers
                 User user = await _userHelper.GetUserAsync(model.Email);
                 if (user == null)
                 {
-                    ModelState.AddModelError(string.Empty, "El email no corresponde a ningún usuario registrado.");
+                    _notyf.Error("El email no corresponde a ningún usuario registrado.");
                     return View(model);
                 }
 
@@ -325,10 +332,11 @@ namespace Shopping.Controllers
                     $"<h1>Shopping - Recuperación de Contraseña</h1>" +
                     $"Para recuperar la contraseña haga click en el siguiente enlace:" +
                     $"<p><a href = \"{link}\">Reset Password</a></p>");
-                ViewBag.Message = "Las instrucciones para recuperar la contraseña han sido enviadas a su correo.";
+
+                _notyf.Information("Las instrucciones para recuperar la contraseña han sido enviadas a su correo.");
                 return View();
             }
-
+            
             return View(model);
         }
 
@@ -346,15 +354,15 @@ namespace Shopping.Controllers
                 IdentityResult result = await _userHelper.ResetPasswordAsync(user, model.Token, model.Password);
                 if (result.Succeeded)
                 {
-                    ViewBag.Message = "Contraseña cambiada con éxito.";
+                    _notyf.Success("Contraseña cambiada con éxito.", 2);
                     return View();
                 }
 
-                ViewBag.Message = "Error cambiando la contraseña.";
+                _notyf.Error("Error cambiando la contraseña.", 2);
                 return View(model);
             }
 
-            ViewBag.Message = "Usuario no encontrado.";
+            _notyf.Error("Usuario no encontrado", 2);
             return View(model);
         }
 

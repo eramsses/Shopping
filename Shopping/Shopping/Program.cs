@@ -1,3 +1,4 @@
+using AspNetCoreHero.ToastNotification;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Shopping.Data;
@@ -13,6 +14,14 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<DataContext>(o =>
 {
     o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+//Configuración para las notificaciones
+builder.Services.AddNotyf(config => {
+    config.DurationInSeconds = 9999999;
+    config.IsDismissable = true;
+    config.HasRippleEffect = false;
+    config.Position = NotyfPosition.TopRight;
 });
 
 //Comportamiento de la contraseña de usuario
@@ -58,7 +67,6 @@ builder.Services.AddScoped<IBlobHelper, BlobHelper>();
 
 //Inyección del Mail Helper
 builder.Services.AddScoped<IMailHelper, MailHelper>();
-
 
 //Agregar para que actualice los cambios al momento del desarrollo
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
