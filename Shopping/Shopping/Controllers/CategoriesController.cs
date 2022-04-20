@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shopping.Data;
@@ -10,10 +11,12 @@ namespace Shopping.Controllers
     public class CategoriesController : Controller
     {
         private readonly DataContext _context;
+        private readonly INotyfService _notyf;
 
-        public CategoriesController(DataContext context)
+        public CategoriesController(DataContext context, INotyfService notyf)
         {
             _context = context;
+            _notyf = notyf;
         }
 
         public async Task<IActionResult> Index()
@@ -36,6 +39,8 @@ namespace Shopping.Controllers
                 {
                     _context.Add(category);
                     await _context.SaveChangesAsync();
+                    string name = category.Name;
+                    _notyf.Success($"Categoría <b>{name}</b> agregada exitosamente.", 2);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateException dbUpdateException)
@@ -43,16 +48,16 @@ namespace Shopping.Controllers
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                     {
                         string name = category.Name;
-                        ModelState.AddModelError(string.Empty, $"Ya existe una categoría con el nombre {name}");
+                       _notyf.Error($"Ya existe una categoría con el nombre {name}", 4);
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, dbUpdateException.InnerException.Message);
+                        _notyf.Error(dbUpdateException.InnerException.Message, 4);
                     }
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError(string.Empty, ex.Message);
+                    _notyf.Error(ex.Message, 4);
                 }
             }
             return View(category);
@@ -88,6 +93,7 @@ namespace Shopping.Controllers
                 {
                     _context.Update(category);
                     await _context.SaveChangesAsync();
+                    _notyf.Success("Categoría modificada exitosamente.", 2);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateException dbUpdateException)
@@ -95,16 +101,16 @@ namespace Shopping.Controllers
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                     {
                         string name = category.Name;
-                        ModelState.AddModelError(string.Empty, $"Ya existe una categoría con el nombre {name}");
+                        _notyf.Error($"Ya existe una categoría con el nombre {name}");
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, dbUpdateException.InnerException.Message);
+                        _notyf.Error(dbUpdateException.InnerException.Message);
                     }
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError(string.Empty, ex.Message);
+                    _notyf.Error(ex.Message);
                 }
 
             }
@@ -150,6 +156,7 @@ namespace Shopping.Controllers
             var category = await _context.Categories.FindAsync(id);
             _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
+            _notyf.Success("Categoría eliminada exitosamente.", 2);
             return RedirectToAction(nameof(Index));
         }
 
