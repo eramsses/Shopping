@@ -164,7 +164,7 @@ namespace Shopping.Controllers
                     _context.Add(state);
                     await _context.SaveChangesAsync();
                     string name = model.Name;
-                    _notyf.Success($"El estado / departamento <b>{name}</b> fue creado exitosamente.");
+                    _notyf.Success($"El estado / departamento <b>{name}</b> fue creado exitosamente.", 2);
                     return RedirectToAction(nameof(Details), new { Id = model.Id });
                 }
                 catch (DbUpdateException dbUpdateException)
@@ -281,7 +281,8 @@ namespace Shopping.Controllers
                 {
                     _context.Update(country);
                     await _context.SaveChangesAsync();
-                    _notyf.Success("País modificado exitosamente.", 2);
+                    string name = country.Name;
+                    _notyf.Success($"El país <b>{name}</b> fue modificado exitosamente.", 2);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateException dbUpdateException)
@@ -351,7 +352,8 @@ namespace Shopping.Controllers
 
                     _context.Update(state);
                     await _context.SaveChangesAsync();
-                    _notyf.Success("El departamento / estado fue modificado exitosamente.", 2);
+                    string name = state.Name;
+                    _notyf.Success("El departamento / estado <b>{name}</b> fue modificado exitosamente.", 2);
                     return RedirectToAction(nameof(Details), new { Id = model.CountryId });
                 }
                 catch (DbUpdateException dbUpdateException)
@@ -359,7 +361,7 @@ namespace Shopping.Controllers
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                     {
                         string name = model.Name;
-                        _notyf.Error($"Ya existe un Departamento / Estado con el nombre {name} en este país.", 4);
+                        _notyf.Error($"Ya existe un Departamento / Estado con el nombre <b>{name}</b> en este país.", 4);
                     }
                     else
                     {
