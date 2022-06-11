@@ -48,7 +48,8 @@ namespace Shopping.Controllers
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                     {
                         string name = category.Name;
-                       _notyf.Error($"Ya existe una categoría con el nombre {name}", 4);
+                        //ModelState.AddModelError(string.Empty, $"Ya existe una categoría con el nombre {name}");
+                        _notyf.Error($"Ya existe una categoría con el nombre {name}", 4);
                     }
                     else
                     {

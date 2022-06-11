@@ -99,7 +99,9 @@ namespace Shopping.Controllers
                     return View(model);
                 }
 
-                ModelState.AddModelError(string.Empty, response.Message);
+                _notyf.Information($"Ocurrió un error: {response.Message}");
+                return View(model);
+                //ModelState.AddModelError(string.Empty, response.Message);
 
             }
 
