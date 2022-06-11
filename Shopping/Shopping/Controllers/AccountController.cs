@@ -8,6 +8,7 @@ using Shopping.Data.Entities;
 using Shopping.Enums;
 using Shopping.Helpers;
 using Shopping.Models;
+using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace Shopping.Controllers
 {
@@ -89,8 +90,16 @@ namespace Shopping.Controllers
                     _notyf.Information("<h5>Usuario Creado!</h5><br/>Las instrucciones para habilitar el usuario han sido enviadas al correo.");
                     return View(model);
                 }
+                else if (response.Message.Contains("Username and Password not accepted"))
+                {
+                    _notyf.Error("Error al enviar email: Username and Password not accepted");
+                }
+                else
+                {
+                    _notyf.Error("Error al enviar email");
+                }
 
-                _notyf.Error(response.Message);
+
 
             }
 
@@ -137,7 +146,7 @@ namespace Shopping.Controllers
         {
             if (ModelState.IsValid)
             {
-                Microsoft.AspNetCore.Identity.SignInResult result = await _userHelper.LoginAsync(model);
+                SignInResult result = await _userHelper.LoginAsync(model);
                 if (result.Succeeded)
                 {
                     _notyf.Success("Bienvenido a Fast Shopping", 2);
@@ -148,7 +157,7 @@ namespace Shopping.Controllers
                 {
                     _notyf.Error("Ya superó el máximo de intentos fallidos su cuenta esta bloqueada, intentelo en 10 minutos");
                 }
-                else if (result.IsNotAllowed)//Corero no confirmado
+                else if (result.IsNotAllowed)//Correo no confirmado
                 {
                     _notyf.Error("El usuario no ha sido habilitado, debes de seguir las instrucciones del correo enviado para poder habilitarte en el sistema.");
                 }
@@ -325,18 +334,30 @@ namespace Shopping.Controllers
                     "ResetPassword",
                     "Account",
                     new { token = myToken }, protocol: HttpContext.Request.Scheme);
-                _mailHelper.SendMail(
-                    $"{user.FullName}",
-                    model.Email,
-                    "Shopping - Recuperación de Contraseña",
-                    $"<h1>Shopping - Recuperación de Contraseña</h1>" +
-                    $"Para recuperar la contraseña haga click en el siguiente enlace:" +
-                    $"<p><a href = \"{link}\">Reset Password</a></p>");
+                Response response = _mailHelper.SendMail(
+                     $"{user.FullName}",
+                     model.Email,
+                     "Shopping - Recuperación de Contraseña",
+                     $"<h1>Shopping - Recuperación de Contraseña</h1>" +
+                     $"Para recuperar la contraseña haga click en el siguiente enlace:" +
+                     $"<p><a href = \"{link}\">Reset Password</a></p>");
 
-                _notyf.Information("Las instrucciones para recuperar la contraseña han sido enviadas a su correo.");
-                return View();
+                if (response.IsSuccess)
+                {
+                    _notyf.Information("Las instrucciones para recuperar la contraseña han sido enviadas a su correo.");
+                    return View(model);
+                }
+                else if (response.Message.Contains("Username and Password not accepted"))
+                {
+                    _notyf.Error("Error al enviar email: Username and Password not accepted");
+                }
+                else
+                {
+                    _notyf.Error("Error al enviar email");
+                }
+                return View(model);
             }
-            
+
             return View(model);
         }
 
