@@ -1,0 +1,37 @@
+﻿@model Shopping.Models.CreateProductViewModel
+@{
+    ViewData["Title"] = "Nuevo Producto";
+}
+
+<!--Encabezado de Página-->
+<div class="main-header d-flex justify-content-between flex-wrap align-items-center pt-3 pb-2 mb-4 border-bottom ">
+    <div class="col-lg-8">
+        <h2>Nuevo Producto</h2>
+        <em>Agregar un nuevo producto.</em>
+    </div>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <a asp-controller="Product" asp-action="Index" class="btn btn-primary"><i class="fal fa-arrow-left"></i> Regresar</a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Categories" />
+            <partial name="_CreateProduct"/>
+            <div class="form-group mt-2">
+                <input type="submit" value="Crear" class="btn btn-primary" />
+                
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+

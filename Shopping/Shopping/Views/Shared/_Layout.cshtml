@@ -23,36 +23,83 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index"><i class="fal fa-home"></i> Inicio</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy"><i class="fal fa-file-archive"></i> Privacidad</a>
-                        </li>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
+
+                    <ul class="navbar-nav">
+                        
                         @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Countries" asp-action="Index"><i class="fal fa-flag"></i> Países</a>
+                            <li class="nav-item dropdown ">
+                                <a class="nav-link dropdown-toggle active" href="#" id="m_drop_user" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="me-1 fad fa-gears"></i>  Mantenimiento
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end " aria-labelledby="m_drop_user">
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center justify-content-between" asp-area="" asp-controller="Countries" asp-action="Index">
+                                            Países
+                                            <i class="ms-4 fad fa-flag"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center justify-content-between" asp-area="" asp-controller="Users" asp-action="Index">
+                                            Usuarios
+                                            <i class="ms-4 fad fa-users "></i>
+                                        </a>
+                                    </li>
+
+                                </ul>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Categories" asp-action="Index"><i class="fal fa-manhole"></i> Categorías</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index"><i class="fad fa-users"></i> Usuarios</a>
+                            <li class="nav-item dropdown ">
+                                <a class="nav-link dropdown-toggle active" href="#" id="m_drop_user" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="me-1 fad fa-shop"></i>  Tienda
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end " aria-labelledby="m_drop_user">
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center justify-content-between" asp-area="" asp-controller="Categories" asp-action="Index">
+                                            Categorías
+                                            <i class="ms-4 fad fa-manhole"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center justify-content-between" asp-area="" asp-controller="Product" asp-action="Index">
+                                            Productos
+                                            <i class="ms-4 fad fa-barcode-read "></i>
+                                        </a>
+                                    </li>
+
+                                </ul>
                             </li>
                         }
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="ChangeUser">@User.Identity.Name</a>
+                            <li class="nav-item dropdown ">
+                                <a class="nav-link dropdown-toggle active" href="#" id="m_drop_user" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fad fa-user me-1"></i>  @User.Identity.Name
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end " aria-labelledby="m_drop_user">
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center justify-content-between" asp-area="" asp-controller="Account" asp-action="ChangeUser">
+                                            Modificar Usuario
+                                            <i class="ms-4 fal fa-user-pen "></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center justify-content-between" asp-area="" asp-controller="Account" asp-action="ChangePassword">
+                                            Cambiar Contraseña
+                                            <i class="ms-4 fal fa-pen "></i>
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li class="d-flex">
+                                        <a class="dropdown-item d-flex align-items-center justify-content-between" asp-area="" asp-controller="Account" asp-action="Logout">
+                                            Cerrar Sesión
+                                            <i class="ms-4 fal fa-arrow-right-from-bracket "></i>
+                                        </a>
+                                    </li>
+
+                                </ul>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout"><i class="fal fa-arrow-right-from-bracket"></i> Cerrar Sesión</a>
-                            </li>
+
                         }
                         else
                         {
