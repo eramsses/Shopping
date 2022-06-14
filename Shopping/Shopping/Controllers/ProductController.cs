@@ -381,6 +381,15 @@ namespace Shopping.Controllers
                 return NotFound();
             }
 
+            //Validar que no se quede sin categorías
+            Product product = await _context.Products
+                .FirstOrDefaultAsync(p => p.Id == productCategory.Product.Id);
+            if (product.CategoriesNumber <= 1)
+            {
+                _notyf.Error("No puede eliminar la última categoría, el producto debe tener al menos una categoría");
+                return RedirectToAction(nameof(Details), new { Id = productCategory.Product.Id });
+            }
+
             _context.ProductCategories.Remove(productCategory);
             await _context.SaveChangesAsync();
             _notyf.Success("Categoría eliminada exitosamente.");
@@ -402,6 +411,7 @@ namespace Shopping.Controllers
             {
                 return NotFound();
             }
+
 
             return View(product);
         }
