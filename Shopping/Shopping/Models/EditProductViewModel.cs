@@ -5,7 +5,7 @@ namespace Shopping.Models
     public class EditProductViewModel
     {
         
-        public int ProductId { get; set; }
+        public int Id { get; set; }
 
         [Display(Name = "Nombre")]
         [MaxLength(50, ErrorMessage = "El campo {0} debe tener máximo {1} caractéres.")]
