@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Shopping.Data.Entities
 {
-    public class Sales
+    public class Sale
     {
         public int Id { get; set; }
 
@@ -18,6 +18,7 @@ namespace Shopping.Data.Entities
         [Display(Name = "Comentarios")]
         public string? Remarks { get; set; }
 
+        [Display(Name ="Estado")]
         public OrderStatus OrderStatus { get; set; }
 
         public ICollection<SaleDetail> SaleDetails { get; set; }

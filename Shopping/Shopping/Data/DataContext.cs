@@ -27,7 +27,7 @@ namespace Shopping.Data
 
         public DbSet<TemporalSale> TemporalSales { get; set; }
 
-        public DbSet<Sales> Sales { get; set; }
+        public DbSet<Sale> Sales { get; set; }
 
         public DbSet<SaleDetail> SalesDetail { get; set; }
 

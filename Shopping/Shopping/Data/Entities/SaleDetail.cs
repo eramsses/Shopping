@@ -6,7 +6,7 @@ namespace Shopping.Data.Entities
     {
         public int Id { get; set; }
 
-        public Sales Sale { get; set; }
+        public Sale Sale { get; set; }
 
         [DataType(DataType.MultilineText)]
         [Display(Name = "Comentarios")]

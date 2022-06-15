@@ -23,7 +23,7 @@ namespace Shopping.Helpers
                 return response;
             }
 
-            Sales sale = new()
+            Sale sale = new()
             {
                 Date = DateTime.UtcNow,
                 User = model.User,

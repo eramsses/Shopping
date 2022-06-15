@@ -46,6 +46,6 @@ namespace Shopping.Data.Entities
         [Display(Name = "Usuario")]
         public string FullNameWithDocument => $"{FirstName} {LastName} - {Document}";
 
-        public ICollection<Sales> Sales { get; set; }
+        public ICollection<Sale> Sales { get; set; }
     }
 }
