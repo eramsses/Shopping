@@ -1,6 +1,8 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Shopping.Common;
 using Shopping.Data;
 using Shopping.Data.Entities;
 using Shopping.Helpers;
@@ -15,13 +17,15 @@ namespace Shopping.Controllers
         private readonly DataContext _context;
         private readonly IUserHelper _userHelper;
         private readonly INotyfService _notyf;
+        private readonly IOrdersHelper _ordersHelper;
 
-        public HomeController(ILogger<HomeController> logger, DataContext context, IUserHelper userHelper, INotyfService notyf)
+        public HomeController(ILogger<HomeController> logger, DataContext context, IUserHelper userHelper, INotyfService notyf, IOrdersHelper ordersHelper)
         {
             _logger = logger;
             _context = context;
             _userHelper = userHelper;
             _notyf = notyf;
+            _ordersHelper = ordersHelper;
         }
 
         public async Task<IActionResult> Index()
@@ -29,6 +33,7 @@ namespace Shopping.Controllers
             List<Product>? products = await _context.Products
                 .Include(p => p.ProductImages)
                 .Include(p => p.ProductCategories)
+                .Where(p => p.Stock > 0)
                 .OrderBy(p => p.Description)
                 .ToListAsync();
 
@@ -174,6 +179,187 @@ namespace Shopping.Controllers
             _context.TemporalSales.Add(temporalSale);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+
+        [Authorize]
+        public async Task<IActionResult> ShowCart()
+        {
+            User user = await _userHelper.GetUserAsync(User.Identity.Name);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            List<TemporalSale> temporalSales = await _context.TemporalSales
+                .Include(ts => ts.Product)
+                .ThenInclude(p => p.ProductImages)
+                .Where(ts => ts.User.Id == user.Id)
+                .ToListAsync();
+
+            ShowCartViewModel model = new()
+            {
+                User = user,
+                TemporalSales = temporalSales,
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ShowCart(ShowCartViewModel model)
+        {
+            User user = await _userHelper.GetUserAsync(User.Identity.Name);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            model.User = user;
+            model.TemporalSales = await _context.TemporalSales
+                .Include(ts => ts.Product)
+                .ThenInclude(p => p.ProductImages)
+                .Where(ts => ts.User.Id == user.Id)
+                .ToListAsync();
+
+            Response response = await _ordersHelper.ProcessOrderAsync(model);
+            if (response.IsSuccess)
+            {
+                return RedirectToAction(nameof(OrderSuccess));
+            }
+
+            _notyf.Error(response.Message);
+            return View(model);
+        }
+
+
+        public async Task<IActionResult> DecreaseQuantity(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            TemporalSale temporalSale = await _context.TemporalSales.FindAsync(id);
+            if (temporalSale == null)
+            {
+                return NotFound();
+            }
+
+            if (temporalSale.Quantity > 1)
+            {
+                temporalSale.Quantity--;
+                _context.TemporalSales.Update(temporalSale);
+                _notyf.Success("Se eliminó 1 artículo a la cantidad.", 4);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                _notyf.Error("La cantidad no puede ser menor que 1, si lo desea eliminar use el botón eliminar.", 4);
+            }
+
+            return RedirectToAction(nameof(ShowCart));
+        }
+
+        public async Task<IActionResult> IncreaseQuantity(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            TemporalSale temporalSale = await _context.TemporalSales.FindAsync(id);
+            if (temporalSale == null)
+            {
+                return NotFound();
+            }
+
+            temporalSale.Quantity++;
+            _context.TemporalSales.Update(temporalSale);
+            await _context.SaveChangesAsync();
+            _notyf.Success("Se agregó 1 artículo a la cantidad.", 4);
+            return RedirectToAction(nameof(ShowCart));
+        }
+
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            TemporalSale temporalSale = await _context.TemporalSales.FindAsync(id);
+            if (temporalSale == null)
+            {
+                return NotFound();
+            }
+
+            _context.TemporalSales.Remove(temporalSale);
+            await _context.SaveChangesAsync();
+            _notyf.Success("Se eliminó 1 artículo del carrito.", 4);
+            return RedirectToAction(nameof(ShowCart));
+        }
+
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            TemporalSale temporalSale = await _context.TemporalSales.FindAsync(id);
+            if (temporalSale == null)
+            {
+                return NotFound();
+            }
+
+            EditTemporalSaleViewModel model = new()
+            {
+                Id = temporalSale.Id,
+                Quantity = temporalSale.Quantity,
+                Remarks = temporalSale.Remarks,
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, EditTemporalSaleViewModel model)
+        {
+            if (id != model.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    TemporalSale temporalSale = await _context.TemporalSales.FindAsync(id);
+                    temporalSale.Quantity = model.Quantity;
+                    temporalSale.Remarks = model.Remarks;
+                    _context.Update(temporalSale);
+                    _notyf.Success("El artículo fue modificado exitosamente", 4);
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception exception)
+                {
+                    ModelState.AddModelError(string.Empty, exception.Message);
+                    return View(model);
+                }
+
+                return RedirectToAction(nameof(ShowCart));
+            }
+
+            return View(model);
+        }
+
+        [Authorize]
+        public IActionResult OrderSuccess()
+        {
+            return View();
         }
 
 

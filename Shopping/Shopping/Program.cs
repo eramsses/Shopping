@@ -68,6 +68,9 @@ builder.Services.AddScoped<IBlobHelper, BlobHelper>();
 //Inyección del Mail Helper
 builder.Services.AddScoped<IMailHelper, MailHelper>();
 
+//Inyección para el procesamiento de la orden
+builder.Services.AddScoped<IOrdersHelper, OrdersHelper>();
+
 //Agregar para que actualice los cambios al momento del desarrollo
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 

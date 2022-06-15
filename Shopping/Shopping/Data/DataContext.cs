@@ -27,6 +27,10 @@ namespace Shopping.Data
 
         public DbSet<TemporalSale> TemporalSales { get; set; }
 
+        public DbSet<Sales> Sales { get; set; }
+
+        public DbSet<SaleDetail> SalesDetail { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

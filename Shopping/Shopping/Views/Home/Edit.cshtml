@@ -1,0 +1,42 @@
+﻿@model Shopping.Models.EditTemporalSaleViewModel
+@{
+    ViewData["Title"] = "Modificar Carro de Compras";
+}
+
+<div class="main-header d-flex justify-content-between flex-wrap align-items-center pt-3 pb-2 mb-4 border-bottom ">
+    <div class="col-lg-8">
+        <h2>Modificar Carro de Compras</h2>
+        <em>Modificar artículos en el carro de compras</em>
+    </div>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <a asp-action="ShowCart" class="btn btn-primary">Regresar</a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Remarks" class="control-label"></label>
+                <input asp-for="Remarks" class="form-control" />
+                <span asp-validation-for="Remarks" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Quantity" class="control-label"></label>
+                <input asp-for="Quantity" class="form-control" />
+                <span asp-validation-for="Quantity" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-2">
+                <input type="submit" value="Guardar" class="btn btn-outline-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
