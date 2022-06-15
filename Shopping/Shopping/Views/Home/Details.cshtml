@@ -1,0 +1,119 @@
+﻿@model Shopping.Models.AddProductToCartViewModel
+@{
+    ViewData["Title"] = "Detalle de Producto";
+}
+
+<!--Encabezado de Página-->
+<div class="main-header d-flex justify-content-between flex-wrap align-items-center pt-3 pb-2 mb-4 border-bottom ">
+    <div class="col-lg-8">
+        <h2>Detalle de Producto</h2>
+        <em>Características del productos.</em>
+    </div>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <a asp-action="Index" class="btn btn-primary">Regresar</a>
+        </div>
+    </div>
+</div>
+
+<h1>@Model?.Name</h1>
+
+<div class="row">
+    <div class="col-md-6">
+
+        <div id="carouselExampleIndicators" class="carousel slide carousel-fade" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                @{
+                    var first = true;
+                    int c1 = 0;
+                    int c2 = 1;
+                }
+                @foreach (var item in @Model?.ProductImages)
+                {
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="@c1" class="@(first?Html.Raw("active"):Html.Raw(""))" aria-current="true" aria-label="Slide @c2"></button>
+                    first = false;
+                    c1++;
+                    c2++;
+                }
+
+            </div>
+            <div class="carousel-inner">
+                @{
+                    var first2 = true;
+                }
+                @foreach (var item in @Model?.ProductImages)
+                {
+                    <div class="carousel-item d-flex w-100 justify-content-center @(first2?Html.Raw("active"):Html.Raw(""))">
+                        <img class="d-block w-75" src="@item.ImageFullPath" alt="@item.Id" width="150">
+                    </div>
+                    first2 = false;
+                }
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <dl class="row">
+            <dt class="col-sm-4">
+                @Html.DisplayNameFor(model => model.Description)
+            </dt>
+            <dd class="col-sm-8">
+                @Html.DisplayFor(model => model.Description)
+            </dd>
+            <dt class="col-sm-4">
+                @Html.DisplayNameFor(model => model.Price)
+            </dt>
+            <dd class="col-sm-8">
+                @Html.DisplayFor(model => model.Price)
+            </dd>
+            <dt class="col-sm-4">
+                @Html.DisplayNameFor(model => model.Stock)
+            </dt>
+            <dd class="col-sm-8">
+                @Html.DisplayFor(model => model.Stock)
+            </dd>
+            <dt class="col-sm-4">
+                @Html.DisplayNameFor(model => model.Categories)
+            </dt>
+            <dd class="col-sm-8">
+                @Html.DisplayFor(model => model.Categories)
+            </dd>
+            <div class="col-md-12">
+                <form asp-action="Details">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+                    <div class="form-group">
+                        <label asp-for="Remarks" class="control-label"></label>
+                        <input asp-for="Remarks" class="form-control" />
+                        <span asp-validation-for="Remarks" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Quantity" class="control-label"></label>
+                        <input asp-for="Quantity" class="form-control" />
+                        <span asp-validation-for="Quantity" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mt-2">
+                        <input type="submit" value="Agregar al Carro de Compras" class="btn btn-outline-primary" />
+
+                    </div>
+                </form>
+            </div>
+        </dl>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    
+}
+
+
