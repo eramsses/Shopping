@@ -28,28 +28,33 @@
     </div>
 </div>
 
-
-
 <div class="d-flex flex-wrap justify-content-between">
-    @foreach (var item in Model.Products)
+    @if (Model.Products.Count() > 0)
     {
-        <div class="shop-card text-center d-flex flex-column">
-            <div class="shop-card-title">
-                <h2>@item.Name </h2>
-            </div>
-            <div class="shop-card-body">
-                <div class="zoom">
-                    <img src="@item.ImageFullPath" style="width:180px;" />
+        @foreach (var item in Model.Products)
+        {
+            <div class="shop-card text-center d-flex flex-column">
+                <div class="shop-card-title">
+                    <h2>@item.Name </h2>
                 </div>
-                <p class="card-text">@item.Description.</p>
-                <h4>@Html.DisplayFor(modelItem => item.Price)</h4>
-            </div>
-            <div class="shop-card-foot">
+                <div class="shop-card-body">
+                    <div class="zoom">
+                        <img src="@item.ImageFullPath" style="width:180px;" />
+                    </div>
+                    <p class="card-text">@item.Description.</p>
+                    <h4>@Html.DisplayFor(modelItem => item.Price)</h4>
+                </div>
+                <div class="shop-card-foot">
 
-                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-secondary">Detalles</a>
-                <a asp-action="Add" asp-route-id="@item.Id" class="btn btn-primary">Agregar</a>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-secondary">Detalles</a>
+                    <a asp-action="Add" asp-route-id="@item.Id" class="btn btn-primary">Agregar</a>
+                </div>
             </div>
-        </div>
+        }
 
+    }
+    else
+    {
+        <h1>No se encontraron productos en su criterio de búsqueda</h1>
     }
 </div>
