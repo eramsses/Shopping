@@ -6,11 +6,17 @@
 <!--Encabezado de Página-->
 <div class="main-header d-flex justify-content-between flex-wrap align-items-center pt-3 pb-2 mb-4 border-bottom ">
     <div class="col-lg-8">
-        <h2>Bienvenidos</h2>
-        <em>Mira nuestros productos.</em>
+        <h2>Productos</h2>
+        <em>Visita nuestros productos y categorías.</em>
     </div>
+
     <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
+
+            <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" class="btn btn-outline-primary"><i class="fa-solid fa-bars-sort"></i> Nombre</a>
+            <a asp-action="Index" asp-route-sortOrder="@ViewData["PriceSortParm"]" class="btn btn-outline-primary"><i class="fa-solid fa-bars-sort"></i> Precio</a>
+
+
             @if (Model.Quantity > 0)
             {
                 <a asp-action="ShowCart" class="btn btn-outline-primary position-relative" title="Ver Carrito de Compras">
@@ -18,17 +24,36 @@
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
                         @Model.Quantity
                     </span>
-                    
-                        
-                    
                 </a>
-        
             }
         </div>
     </div>
 </div>
+<div class="d-flex justify-content-between align-items-start">
+    <div class="mt-4">
+        @foreach (var item in Model.Categories)
+        {
+            <span>@item.Name&nbsp;&nbsp;</span>
+        }
+    </div>
+    <div class="mb-2">
+        <form asp-action="Index" method="get">
+            <div class="form-actions no-color">
+                <p>
+                    
+                    <div class="input-group mb-4">
+                        <input type="text" class="form-control" placeholder="Buscar..." aria-label="Recipient's username" aria-describedby="button-addon2" name="SearchString" value="@ViewData["CurrentFilter"]" />
+                        <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Buscar</button>
+                    <a asp-action="Index" class="btn btn-secondary">Ver Todo</a>
+                    </div>
+                    
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
 
-<div class="d-flex flex-wrap justify-content-between">
+<div class="d-flex flex-wrap justify-content-evenly">
     @if (Model.Products.Count() > 0)
     {
         @foreach (var item in Model.Products)
