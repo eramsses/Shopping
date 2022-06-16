@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Shopping.Data;
 using Shopping.Data.Entities;
 using Shopping.Enums;
+using Shopping.Helpers;
 
 namespace Shopping.Controllers
 {
@@ -13,11 +14,13 @@ namespace Shopping.Controllers
     {
         private readonly DataContext _context;
         private readonly INotyfService _notyf;
+        private readonly IOrdersHelper _ordersHelper;
 
-        public OrdersController(DataContext context, INotyfService notyf)
+        public OrdersController(DataContext context, INotyfService notyf, IOrdersHelper ordersHelper)
         {
             _context = context;
             _notyf = notyf;
+            _ordersHelper = ordersHelper;
         }
         public async Task<IActionResult> Index()
         {
@@ -133,6 +136,31 @@ namespace Shopping.Controllers
             return RedirectToAction(nameof(Details), new { Id = sale.Id });
         }
 
+        public async Task<IActionResult> Cancel(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Sale sale = await _context.Sales.FindAsync(id);
+            if (sale == null)
+            {
+                return NotFound();
+            }
+
+            if (sale.OrderStatus == OrderStatus.Cancelado)
+            {
+                _notyf.Error("No se puede cancelar un pedido que esté en estado \"Cancelado\".");
+            }
+            else
+            {
+                await _ordersHelper.CancelOrderAsync(sale.Id);
+                _notyf.Success("El estado del pedido ha sido cambiado a \"Cancelado\".", 4);
+            }
+
+            return RedirectToAction(nameof(Details), new { Id = sale.Id });
+        }
 
 
 
