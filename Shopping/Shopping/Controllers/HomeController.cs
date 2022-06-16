@@ -28,11 +28,23 @@ namespace Shopping.Controllers
             _ordersHelper = ordersHelper;
         }
 
-        public async Task<IActionResult> Index(string sortOrder, string searchString)
+        public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
-            ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "NameDesc" : "";
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "NameDesc" : "";
             ViewData["PriceSortParm"] = sortOrder == "Price" ? "PriceDesc" : "Price";
+
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
             ViewData["CurrentFilter"] = searchString;
+
 
             IQueryable<Product> query = _context.Products
                 .Include(p => p.ProductImages)
@@ -66,9 +78,10 @@ namespace Shopping.Controllers
                     break;
             }
 
+            int pageSize = 8;
 
-            HomeViewModel model = new() { 
-                Products = await query.ToListAsync(),
+            HomeViewModel model = new() {
+                Products = await PaginatedList<Product>.CreateAsync(query, pageNumber ?? 1, pageSize),
                 Categories = await _context.Categories.ToListAsync()
             };
             User user = await _userHelper.GetUserAsync(User.Identity.Name);
