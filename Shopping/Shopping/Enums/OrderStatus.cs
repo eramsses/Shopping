@@ -3,7 +3,7 @@
     public enum OrderStatus
     {
         Nuevo,
-        Despanchado,
+        Despachado,
         Enviado,
         Confirmado,
         Cancelado

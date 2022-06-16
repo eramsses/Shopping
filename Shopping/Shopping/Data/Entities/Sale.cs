@@ -35,5 +35,7 @@ namespace Shopping.Data.Entities
         [Display(Name = "Valor")]
         public decimal Value => SaleDetails == null ? 0 : SaleDetails.Sum(sd => sd.Value);
 
+        public string OrderStatusTxt => OrderStatus.ToString();
+
     }
 }

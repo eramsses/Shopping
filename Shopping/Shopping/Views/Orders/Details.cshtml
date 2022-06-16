@@ -22,11 +22,21 @@
 </div>
 
 <div>
-    <a asp-action="Dispatch" asp-route-id="@Model?.Id" class="btn btn-outline-primary">Despachar</a>
-    <a asp-action="Send" asp-route-id="@Model?.Id" class="btn btn-outline-secondary">Envíar</a>
-    <a asp-action="Confirm" asp-route-id="@Model?.Id" class="btn btn-outline-warning">Confirmar</a>
+    @if (Model.OrderStatusTxt == "Nuevo")
+    {
+            <a asp-action="Dispatch" asp-route-id="@Model?.Id" class="btn btn-outline-primary">Despachar</a>
+    }
+    @if (Model.OrderStatusTxt == "Despachado")
+    {
+            <a asp-action="Send" asp-route-id="@Model?.Id" class="btn btn-outline-secondary">Envíar</a>
+    }
+    @if (Model.OrderStatusTxt == "Enviado")
+    {
+            <a asp-action="Confirm" asp-route-id="@Model?.Id" class="btn btn-outline-warning">Confirmar</a>
+    }
+
+
     <a asp-action="Cancel" asp-route-id="@Model?.Id" class="btn btn-outline-danger">Cancelar</a>
-    <a asp-action="Index" class="btn btn-outline-success">Regresar</a>
 </div>
 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
@@ -65,26 +75,26 @@
                     <tbody>
                         @foreach (var item in Model.SaleDetails)
                         {
-                            <tr>
-                                <td>
+                                <tr>
+                                    <td>
                                     @Html.DisplayFor(modelItem => item.Product.Name)
-                                </td>
-                                <td>
+                                    </td>
+                                    <td>
                                     @Html.DisplayFor(modelItem => item.Remarks)
-                                </td>
-                                <td>
+                                    </td>
+                                    <td>
                                     @Html.DisplayFor(modelItem => item.Product.Price)
-                                </td>
-                                <td>
+                                    </td>
+                                    <td>
                                     @Html.DisplayFor(modelItem => item.Quantity)
-                                </td>
-                                <td>
+                                    </td>
+                                    <td>
                                     @Html.DisplayFor(modelItem => item.Value)
-                                </td>
-                                <td>
-                                    <img src="@item.Product.ImageFullPath" style="width:100px;" />
-                                </td>
-                            </tr>
+                                    </td>
+                                    <td>
+                                        <img src="@item.Product.ImageFullPath" style="width:100px;" />
+                                    </td>
+                                </tr>
                         }
                     </tbody>
                 </table>
@@ -94,21 +104,23 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+        <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#MyTable').DataTable({
-                "language": {
-                    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
-                },
-                "aLengthMenu": [
-                    [25, 50, 100, 200, -1],
-                    [25, 50, 100, 200, "Todos"]
-                ]
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('#MyTable').DataTable({
+                    "language": {
+                        "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+                    },
+                    "aLengthMenu": [
+                        [25, 50, 100, 200, -1],
+                        [25, 50, 100, 200, "Todos"]
+                    ]
+                });
             });
-        });
-    </script>
+        </script>
 }
 

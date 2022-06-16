@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shopping.Data;
 using Shopping.Data.Entities;
+using Shopping.Enums;
 
 namespace Shopping.Controllers
 {
@@ -10,10 +12,12 @@ namespace Shopping.Controllers
     public class OrdersController : Controller
     {
         private readonly DataContext _context;
+        private readonly INotyfService _notyf;
 
-        public OrdersController(DataContext context)
+        public OrdersController(DataContext context, INotyfService notyf)
         {
             _context = context;
+            _notyf = notyf;
         }
         public async Task<IActionResult> Index()
         {
@@ -44,6 +48,91 @@ namespace Shopping.Controllers
 
             return View(sale);
         }
+
+        public async Task<IActionResult> Dispatch(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Sale sale = await _context.Sales.FindAsync(id);
+            if (sale == null)
+            {
+                return NotFound();
+            }
+
+            if (sale.OrderStatus != OrderStatus.Nuevo)
+            {
+                _notyf.Error("Solo se pueden despachar pedidos que estén en estado \"nuevo\".");
+            }
+            else
+            {
+                sale.OrderStatus = OrderStatus.Despachado;
+                _context.Sales.Update(sale);
+                await _context.SaveChangesAsync();
+                _notyf.Success("El estado del pedido ha sido cambiado a \"Despachado\".");
+            }
+
+            return RedirectToAction(nameof(Details), new { Id = sale.Id });
+        }
+
+        public async Task<IActionResult> Send(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Sale sale = await _context.Sales.FindAsync(id);
+            if (sale == null)
+            {
+                return NotFound();
+            }
+
+            if (sale.OrderStatus != OrderStatus.Despachado)
+            {
+                _notyf.Error("Solo se pueden enviar pedidos que estén en estado \"Despachado\".");
+            }
+            else
+            {
+                sale.OrderStatus = OrderStatus.Enviado;
+                _context.Sales.Update(sale);
+                await _context.SaveChangesAsync();
+                _notyf.Success("El estado del pedido ha sido cambiado a \"Enviado\".");
+            }
+
+            return RedirectToAction(nameof(Details), new { Id = sale.Id });
+        }
+
+        public async Task<IActionResult> Confirm(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Sale sale = await _context.Sales.FindAsync(id);
+            if (sale == null)
+            {
+                return NotFound();
+            }
+
+            if (sale.OrderStatus != OrderStatus.Enviado)
+            {
+                _notyf.Error("Solo se pueden confirmar pedidos que estén en estado \"Enviado\".");
+            }
+            else
+            {
+                sale.OrderStatus = OrderStatus.Confirmado;
+                _context.Sales.Update(sale);
+                await _context.SaveChangesAsync();
+                _notyf.Success("El estado del pedido ha sido cambiado a \"Confirmado\".");
+            }
+
+            return RedirectToAction(nameof(Details), new { Id = sale.Id });
+        }
+
 
 
 
