@@ -88,7 +88,7 @@ namespace Shopping.Controllers
                 if (response.IsSuccess)
                 {
                     _notyf.Information("<h5>Usuario Creado!</h5><br/>Las instrucciones para habilitar el usuario han sido enviadas al correo.");
-                    return View(model);
+                    return RedirectToAction(nameof(Login));
                 }
                 else if (response.Message.Contains("Username and Password not accepted"))
                 {
@@ -345,7 +345,7 @@ namespace Shopping.Controllers
                 if (response.IsSuccess)
                 {
                     _notyf.Information("Las instrucciones para recuperar la contraseña han sido enviadas a su correo.");
-                    return View(model);
+                    return RedirectToAction(nameof(Login));
                 }
                 else if (response.Message.Contains("Username and Password not accepted"))
                 {

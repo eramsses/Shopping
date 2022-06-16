@@ -16,7 +16,7 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary fixed-top border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><i class="fad fa-cart-shopping-fast"></i> Fast Shopping</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -77,6 +77,9 @@
                         }
                         @if (User.Identity.IsAuthenticated)
                         {
+                            <li class="nav-item">
+                                <a class="nav-link active" asp-area="" asp-controller="Orders" asp-action="MyOrders"><i class="fal fa-arrow-right-to-bracket"></i> Mis Ordenes</a>
+                            </li>
                             <li class="nav-item dropdown ">
                                 <a class="nav-link dropdown-toggle active" href="#" id="m_drop_user" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fad fa-user me-1"></i>  @User.Identity.Name
