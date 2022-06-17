@@ -7,16 +7,17 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.custom.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Shopping.styles.css" asp-append-version="true" />
-
-
-
+    <link rel="stylesheet" href="~/lib/jqueryui/jquery-ui.min.css" />
+    
     <!-- Font Awesome-->
     <link rel="stylesheet" href="~/lib/fa_web/css/awesome-font.css" />
+
+    
 
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary  border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary fixed-top border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><i class="fad fa-cart-shopping-fast"></i> Fast Shopping</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -120,8 +121,9 @@
             </div>
         </nav>
     </header>
-    <div class="container  min-vh-80 ">
+    <div class="container  min-vh-80 " style="margin-top: 80px">
         <main role="main" class="pb-3">
+            <partial name="_BusyIndicatorPartial" />
             @RenderBody()
         </main>
     </div>
@@ -133,7 +135,24 @@
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jasny/jasny-bootstrap.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/jquery-ui/jquery-ui.min.js"></script>
+    
+    <script>
+        function displayBusyIndicator() {
+            $('.loading').show();
+        }
+    </script>
+
+    <script>
+        $(window).on('beforeunload', function () {
+            displayBusyIndicator();
+        });
+    </script>
+
+
+
 
     @await Component.InvokeAsync("Notyf")
     @await RenderSectionAsync("Scripts", required: false)

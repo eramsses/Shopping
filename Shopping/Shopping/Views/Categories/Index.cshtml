@@ -4,8 +4,7 @@
     ViewData["Title"] = "Categorías";
 }
 <!--Data Tables-->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" asp-append-version="true" />
-
+<link rel="stylesheet" href="~/lib/datatables/css/jquery.dataTables.min.css" asp-append-version="true" />
 
 
 <div class="row">
@@ -67,7 +66,7 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
-<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="~/lib/datatables/js/jquery.dataTables.min.js"></script>
 
 <script type="text/javascript">
         $(document).ready( function () {
