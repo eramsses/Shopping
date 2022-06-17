@@ -11,6 +11,11 @@ namespace Shopping.Data.Entities
         [Required(ErrorMessage = "El campo {0} es obligatorio")]
         public string Name { get; set; }
 
-        public ICollection<ProductCategory> productCategories { get; set; } 
+        public ICollection<ProductCategory> ProductCategories { get; set; }
+
+        [Display(Name = "# Productos")]
+        public int ProductsNumber => ProductCategories == null ? 0 : ProductCategories.Count();
+
+
     }
 }
