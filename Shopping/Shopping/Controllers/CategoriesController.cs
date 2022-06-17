@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shopping.Data;
 using Shopping.Data.Entities;
+using Shopping.Helpers;
+using static Shopping.Helpers.ModalHelper;
 
 namespace Shopping.Controllers
 {
@@ -26,142 +28,91 @@ namespace Shopping.Controllers
                 .ToListAsync());
         }
 
-        public IActionResult Create()
+        [NoDirectAccess]
+        public async Task<IActionResult> Delete(int? id)
         {
-            return View();
+            Category category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+            try
+            {
+                _context.Categories.Remove(category);
+                await _context.SaveChangesAsync();
+                _notyf.Success("Registro eliminado exitosamente.", 3);
+            }
+            catch
+            {
+                _notyf.Error("No se puede borrar la categoría porque tiene registros relacionados.");
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+
+        [NoDirectAccess]
+        public async Task<IActionResult> AddOrEdit(int id = 0)
+        {
+            if (id == 0)
+            {
+                return View(new Category());
+            }
+            else
+            {
+                Category category = await _context.Categories.FindAsync(id);
+                if (category == null)
+                {
+                    return NotFound();
+                }
+
+                return View(category);
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Category category)
+        public async Task<IActionResult> AddOrEdit(int id, Category category)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Add(category);
-                    await _context.SaveChangesAsync();
-                    string name = category.Name;
-                    _notyf.Success($"Categoría <b>{name}</b> agregada exitosamente.", 2);
-                    return RedirectToAction(nameof(Index));
+                    if (id == 0) //Insert
+                    {
+                        _context.Add(category);
+                        await _context.SaveChangesAsync();
+                        _notyf.Success("Registro creado exitosamente", 3);
+                    }
+                    else //Update
+                    {
+                        _context.Update(category);
+                        await _context.SaveChangesAsync();
+                        _notyf.Success("Registro actualizado exitosamente", 3);
+                    }
                 }
                 catch (DbUpdateException dbUpdateException)
                 {
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                     {
-                        string name = category.Name;
-                        //ModelState.AddModelError(string.Empty, $"Ya existe una categoría con el nombre {name}");
-                        _notyf.Error($"Ya existe una categoría con el nombre {name}", 4);
-                    }
-                    else
-                    {
-                        _notyf.Error(dbUpdateException.InnerException.Message, 4);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _notyf.Error(ex.Message, 4);
-                }
-            }
-            return View(category);
-        }
-
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null)
-            {
-                return NotFound();
-            }
-            return View(category);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Category category)
-        {
-            if (id != category.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(category);
-                    await _context.SaveChangesAsync();
-                    _notyf.Success("Categoría modificada exitosamente.", 2);
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (DbUpdateException dbUpdateException)
-                {
-                    if (dbUpdateException.InnerException.Message.Contains("duplicate"))
-                    {
-                        string name = category.Name;
-                        _notyf.Error($"Ya existe una categoría con el nombre {name}");
+                        _notyf.Error("Ya existe una categoría con el mismo nombre.");
                     }
                     else
                     {
                         _notyf.Error(dbUpdateException.InnerException.Message);
                     }
+                    return View(category);
                 }
-                catch (Exception ex)
+                catch (Exception exception)
                 {
-                    _notyf.Error(ex.Message);
+                    _notyf.Error(exception.Message);
+                    return View(category);
                 }
 
+                //Este retorno es necesario cuando viene desde una modal.
+                return Json(new { isValid = true, html = ModalHelper.RenderRazorViewToString(this, "Index", _context.Categories.Include(c => c.ProductCategories).ToList()) });
+
             }
-            return View(category);
+            
+            return Json(new { isValid = false, html = ModalHelper.RenderRazorViewToString(this, "AddOrEdit", category) });
         }
 
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var category = await _context.Categories.FirstOrDefaultAsync(m => m.Id == id);
-            if (category == null)
-            {
-                return NotFound();
-            }
-
-            return View(category);
-        }
-
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var category = await _context.Categories.FirstOrDefaultAsync(m => m.Id == id);
-            if (category == null)
-            {
-                return NotFound();
-            }
-
-            return View(category);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var category = await _context.Categories.FindAsync(id);
-            _context.Categories.Remove(category);
-            await _context.SaveChangesAsync();
-            _notyf.Success("Categoría eliminada exitosamente.", 2);
-            return RedirectToAction(nameof(Index));
-        }
 
     }
 }

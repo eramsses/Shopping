@@ -25,6 +25,8 @@ namespace Shopping.Helpers
                     new HtmlHelperOptions()
                 );
                 viewResult.View.RenderAsync(viewContext);
+                
+                Console.WriteLine(sw.GetStringBuilder().ToString());
                 return sw.GetStringBuilder().ToString();
             }
         }

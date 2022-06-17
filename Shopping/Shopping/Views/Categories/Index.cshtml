@@ -3,85 +3,81 @@
 @{
     ViewData["Title"] = "Categorías";
 }
-<!--Data Tables-->
 
 
-
-<div class="row">
-    <div class="col-12">
-
-        <!--Encabezado de Página-->
-        <div class="main-header d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom ">
-            <div class="col-lg-8">
-                <h2>Categorías</h2>
-                <em >Catálogo de categorías.</em>
-            </div>
-            <div class="btn-toolbar mb-2 mb-md-0">
-                <div class="btn-group me-2">
-                    <a asp-action="Create" class="btn btn-primary"><i class="fad fa-xl fa-circle-plus"></i> Agregar Nueva Categoría</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="panel-body">
-            <table class="table table-hover table-responsive table-striped" id="MyTable">
-                <thead>
-                    <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Name)
-                        </th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Name)
-                            </td>
-                            
-                            <td class="text-end">
-                                <div class="dropdown">
-                                    <a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Opciones
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-md-end" aria-labelledby="dropdownMenuLink">
-                                        <li><a asp-action="Edit" asp-route-id="@item.Id" class="dropdown-item text-warning"><i class="fal fa-pencil"></i> Modificar</a></li>
-                                        <li><a asp-action="Details" asp-route-id="@item.Id" class="dropdown-item text-info"><i class="fal fa-table-list"></i> Detalles</a></li>
-                                        <li><a asp-action="Delete" asp-route-id="@item.Id" class="dropdown-item text-danger"><i class="fal fa-trash-xmark "></i> Eliminar</a></li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+<!--Encabezado de Página-->
+<div class="main-header d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom ">
+    <div class="col-lg-8">
+        <h2>Categorías</h2>
+        <em>Catálogo de categorías.</em>
+    </div>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <a onclick="showInPopup('@Url.Action("AddOrEdit", "Categories", new { id = 0 }, Context.Request.Scheme)' , 'Nueva Categoría')" class="btn btn-primary"><i class="fad fa-xl fa-circle-plus"></i> Nueva Categoría</a>
         </div>
     </div>
 </div>
 
-@section Scripts{
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
 
+<!-- Content Wrapper. Contains page content -->
+<div class="container-fluid">
+    <div class="card mt-2">
+        
+        <div class="card-body">
+            <div id="view-all">
+                @await Html.PartialAsync("_ViewAll", Model)
+            </div>
+        </div>
+    </div>
+</div>
 
+<!--modal placeholder. Also you can place this modal form in the _Layout.cshtml-->
+<div class="modal fade in" tabindex="-1" role="dialog" data-bs-backdrop="static" id="form-modal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title text-white"></h5>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close">                   
+                </button>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
 
-<script type="text/javascript">
-        $(document).ready( function () {
-        $('#MyTable').DataTable({
-            language: {
-            url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json',
-        },
-        "lengthMenu": [
-                [10, 50, 100, 200, -1],
-                [10, 50, 100, 200, "Todos"]
-            ]
+<partial name="_DeleteDialog" />
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script src="~/js/showmodal.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#CategoriesTable').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+                },
+                "aLengthMenu": [
+                    [25, 50, 100, 200, -1],
+                    [25, 50, 100, 200, "Todos"]
+                ]
+            });
         });
-    } );
-</script>
+    </script>
+
+    <script>
+        sc_deleteDialog.openModal('deleteItem', true, 'btnYesDelete', '/Categories/Delete/', false);
+    </script>
 }
+
+
+
+
+
+
+
 
 
 
